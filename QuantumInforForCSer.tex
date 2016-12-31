@@ -1,0 +1,239 @@
+%!TEX program = xelatex
+%!TEX builder = simple
+% or can be latexmk texify
+%!TEX option = --output-driver="xdvipdfmx -V7"
+% -shell-escape -8bit % For minted package
+%!TEX root = ...
+\documentclass[12pt,hyperref={CJKbookmarks=true},aspectratio=169]{beamer}
+\usetheme[progressbar=frametitle]{metropolis}
+\metroset{block=fill}
+\setbeamertemplate{bibliography item}{\insertbiblabel}
+% \usepackage{mydefs}
+% \renewcommand{\figurename}{Fig.}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+\usepackage[noindent]{ctex}
+\usepackage{amsmath,amssymb,esint}
+\allowdisplaybreaks[0]
+\usepackage{bm}
+\usepackage{siunitx}
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{array}
+\usepackage{ulem}
+\renewcommand{\ULthickness}{1.5pt}
+\usepackage{verbatim}
+\usepackage{braket}
+
+\newcommand{\dif}{\,\mathrm d}
+\newcommand\mi{\mathrm{i}}
+\newcommand\e{\mathrm{e}} % 定义数学模式中常用的正体字符
+\bibliographystyle{unsrt}
+
+\titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.png}}
+\title{面向计算机爱好者的量子信息}
+\author{吕铭}
+\institute{物理系毕业狗}
+\date{2016年6月11日 金枪鱼之夜}
+
+\begin{document}
+
+\maketitle
+
+% \begin{frame}{目录}
+%   \setbeamertemplate{section in toc}[sections numbered]
+%   \tableofcontents[hideallsubsections]
+% \end{frame}
+
+\section{量子态是什么}
+\begin{frame}[t]\frametitle{量子态 (量子比特) 是什么}
+\begin{itemize}
+	\item 经典的比特: ``$0$'' 或者 ``$1$''
+	\begin{itemize}
+		\item 以概率 $p$ 为 ``$0$'', $1-p$ 为 ``$1$''
+	\end{itemize}
+	\item 量子的比特: $\ket{\psi} = c_0\ket 0 + c_1\e^{\mi\varphi}\ket 1$
+	\begin{itemize}
+		\item 相位 $\varphi$ 和波
+		\item $\ket 0$ 的概率 $c_0^2$, $\ket 1$ 的概率 $c_1^2$
+		\begin{itemize}
+			\item 归一化 $c_0^2 + c_1^2 = 1$
+			\item $\ket{\psi} = \alpha\ket 0 + \beta\ket 1$
+		\end{itemize}
+		\item $(\ket 0 + \ket 1)/\sqrt 2$ 的概率? ------ 线性代数
+		\item $\bra \psi = (\ket \psi)^\dagger$, $p = |\braket{\psi|\psi'}|^2$
+		$$
+		\ket\psi \equiv \begin{pmatrix}
+			\alpha \\ \beta
+		\end{pmatrix}
+		$$
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{一些概念}
+\begin{itemize}
+	\item 纯态 $\ket \psi$: 包含全部信息 (Bell 不等式)
+	\item 混合态: 经典概率与量子态合在一起的描述.. 
+	通常 ``退相干'' 到 (完全) 混合态
+	\item 直积态: 两个或多个比特简单放在一起的状态
+	$$
+	\ket{\psi} = \ket 0 \ket 0 \equiv \ket 0\otimes \ket 0
+	$$
+	\item Bell 态与最大纠缠态
+	$$
+	\ket{\Psi^\pm} = \ket 0 \ket 0 \pm \ket 1 \ket 1; \quad
+	\ket{\Phi^\pm} = \ket 0 \ket 1 \pm \ket 1 \ket 0
+	$$
+	\item 测量与态的坍缩
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{所以具体一点是什么}
+\begin{minipage}[t]{0.6\linewidth}
+\begin{itemize}
+	\item $\ket 0$ 和 $\ket 1$ 具体是什么? \\
+	其实大家还在探索中, 可能的答案包括: 
+	\begin{enumerate}
+		\item 超导电路 (现在最火的)
+		\item 晶体缺陷 (NV-色芯)
+		\item 离子阱 (存储)
+		\item 光子 (偏振) 与非线性光学
+		\item 核磁共振 (NMR)
+		\item 拓扑序
+		\item ......
+	\end{enumerate}
+\end{itemize}
+\end{minipage}%
+\begin{minipage}[t]{0.4\linewidth}
+\begin{itemize}
+	\item 骗! 经! 费!
+	\item 夸大宣传
+	\item 困难
+	\begin{enumerate}
+		\item 相干时间
+		\item 可操作性
+		\item 可拓展性
+	\end{enumerate}
+	\item 大体上说我们还在做二极管的阶段
+\end{itemize}
+\end{minipage}
+\end{frame}
+
+\section{量子通信与量子密钥分发}
+
+\subsection{量子纠缠}
+\begin{frame}[t]\frametitle{量子纠缠 (Entanglement)}
+\begin{itemize}
+	\item 超出经典相关性的量子关联 (Bell 不等式)
+	\item Bell 态是最大纠缠态: \\
+	合在一起是纯态, 分开看是完全混合态
+	\item 没有相互作用, 不能超光速通信!!! 
+	\item 对于量子传态 (teleportation) 和量子中继有重要作用
+	\item 涉及基础物理的解释 (神棍... )
+	\item 潜在的保密计算
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{对于测量的限制}
+\begin{itemize}
+	\item 测量一定伴随干扰\\
+	如果某一次测量的结果与态有关, 那么测量后态一定发生改变
+	\item 不可克隆原理\\
+	没有办法从 $\ket\psi$ 得到 $\ket\psi\ket\psi$
+	\item 不可分辨原理\\
+	如果 $\ket{\psi_1}$ 和 $\ket{\psi_2}$ 不正交, 
+	那么对于单个比特没有办法完美地区分二者
+	\item 密钥分发: BB84 协议 (Bennett and Brassard, 1984)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{量子通信/量子密钥分发}
+\begin{itemize}
+	\item 经典信道与量子信道共同使用
+	\item 主要 (唯一) 优势是物理规律保护的安全性
+	\item 最常见的是借助光纤/自由空间光子
+	\item 主要困难在于空间衰减和单光子源效率
+	\item 已经有产品了! (潘建伟, 济南试验网)
+	\item 卫星试验中... 光纤量子通信 50km 中继
+\end{itemize}
+\end{frame}
+
+\section{量子计算}
+\begin{frame}[t]\frametitle{量子门 (Quantum gate)}
+\begin{itemize}
+	\item 描述量子比特的演化: 幺正算符 ($U U^\dagger = I$)
+	% \item 可编程的量子系统: 
+	% $ V\ket{\alpha}\ket{n} = (U_n\ket{\alpha})\ket n $
+	\item 通用量子门集合: 
+	\begin{itemize}
+		\item 对于单量子比特, 任意量子门可以用 2 个基本门的组合来近似, 
+		门序列长度 $\mathcal O (-\log^c \epsilon)$ ($\epsilon$ 是近似误差)
+		\item 对于 $N$ 量子比特, 只需要增加对于两两产生纠缠的量子门 $W_{ij}$
+	\end{itemize}
+	\begin{align*}
+		&H = \frac{1}{\sqrt 2}\begin{pmatrix}
+		1 & 1 \\
+		1 & -1
+		\end{pmatrix}; \quad 
+		T = \begin{pmatrix}
+			\e^{-\mi\pi/2} & 0 \\
+			0 & \e^{\mi\pi /8}
+		\end{pmatrix} \\
+		&\mathtt{CNOT} = 
+		\ket 0 \bra 0 \otimes I + \ket 1 \bra 1 \otimes \mathtt{NOT} 
+		= \begin{pmatrix}
+			1 & 0 & 0 & 0\\
+			0 & 1 & 0 & 0\\
+			0 & 0 & 0 & 1\\
+			0 & 0 & 1 & 0
+		\end{pmatrix}
+	\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{量子算法}
+\begin{itemize}
+	\item Grover 搜索算法: 已知函数 $f:\{1, \cdots, N\}\mapsto \{0, 1\}$, 
+	假定 $f(n) = 1$ 数量 $S$ 极少, 寻找这样的 $n$. 
+	\begin{itemize}
+		\item 时间复杂度: 
+		$\mathcal O(\sqrt N)$ (经典算法 $\mathcal{O}(N)$)
+		\item 从 $\ket\psi = (\sum_n \ket{n})/\sqrt{N}$ 出发, 
+		经过 $\mathcal O(\sqrt{N/S})$ 个门, 以几率 $p \ge 1 - S/N$ 成功
+	\end{itemize}
+	已经证明, $\mathcal O(\sqrt{N})$ 是量子力学范围内能做到的最好 
+	(意味着无法解决 NP 问题) \\
+	\item Shor 质数分解算法: 来源于数论中质因数和取余函数的周期性的关系, 
+	\begin{itemize}
+		\item 时间复杂度: 
+		$\mathcal O (L^3)$ (经典算法 $\mathcal O (\e^{L^{1/3}\log^{2/3} L})$)
+	\end{itemize}
+	\item BQP (bounded error quantum polynomial) 问题
+\end{itemize}
+\end{frame}
+
+\begin{frame}[t]\frametitle{其他}
+\begin{itemize}
+	\item ``异端''
+	\begin{itemize}
+		\item 系综量子计算
+		\item D-Wave: 量子退火机, 复杂度用 $\mathcal O(f(\Delta E))$ 描述
+		\item 拓扑量子计算: ???
+	\end{itemize}
+	\item 量子纠错
+	\item 如果量子计算机做不出来怎么办? 
+	\item 如果量子计算机做出来怎么办? 
+	\begin{itemize}
+		\item 脆弱的存储, 复杂的控制
+		\item 潜在稍强的计算能力, 潜在更好的功耗控制
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\plain{The End...\\ Thank you for listening! \\ Q \& A?}
+\end{document}
